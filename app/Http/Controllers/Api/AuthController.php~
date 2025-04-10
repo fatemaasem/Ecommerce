@@ -1,0 +1,111 @@
+<?php
+
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\LoginRequest;
+use App\Services\AuthService;
+use App\DTOs\UserDTO;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Facades\JWTAuth;
+
+class AuthController extends Controller
+{
+    private AuthService $authService;
+
+    /**
+     * Constructor to inject AuthService dependency
+     */
+    public function __construct(AuthService $authService)
+    {
+        $this->authService = $authService;
+    }
+
+    /**
+     * Handles user registration
+     *
+     * @param RegisterRequest $request
+     * @return JsonResponse
+     */
+    public function register(RegisterRequest $request): JsonResponse
+    {
+        try {
+            // Convert request data into a UserDTO object and register the user
+            $userMessage = $this->authService->register(UserDTO::fromArray($request));
+
+            return response()->json($userMessage);
+        } catch (Exception $e) {
+            // Handle registration failure
+            return response()->json(['error' => 'Registration failed'], 500);
+        }
+    }
+
+    /**
+     * Handles user login
+     *
+     * @param LoginRequest $request
+     * @return JsonResponse
+     */
+    public function login(LoginRequest $request): JsonResponse
+    {
+        try {
+            // Convert request data into a UserDTO object
+            $userDto = UserDTO::fromArray($request);
+
+            // Authenticate user with provided email and password
+            $userMessage = $this->authService->login(['email' => $userDto->email, 'password' => $userDto->password]);
+
+            // Check if authentication was successful
+            if (!$userMessage['authorization']['token']) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+
+            return response()->json(
+                $userMessage
+            );
+        } catch (Exception $e) {
+            // Handle login failure
+            return response()->json(['error' => 'Login failed'], 500);
+        }
+    }
+
+   /**
+     * Handles user logout
+     *
+     * This function logs out the currently authenticated user
+     * and invalidates their token.
+     *
+     * @return JsonResponse
+     */
+    public function logout(): JsonResponse
+    {
+        // Log out the user by invalidating their token
+        Auth::guard('jwt')->logout();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Successfully logged out',
+        ]);
+    }
+    /**
+     * Refresh the JWT token for the authenticated user.
+     *
+     * This method generates a new token and returns it along with the user data.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refresh()
+    {
+        // Call the auth service to refresh the token and retrieve the user data.
+        $userMessage = $this->authService->refresh(); // Returns a new token and UserDTO.
+
+        // Return the refreshed token and user details as a JSON response.
+        return response()->json($userMessage);
+    }
+
+
+}
