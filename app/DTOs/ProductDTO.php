@@ -18,6 +18,7 @@ class ProductDTO
         public readonly int $stock_quantity,
         public readonly bool $featured = false, // يمكن أن تكون true, false
         public readonly bool $popular = false,  // يمكن أن تكون true, false
+        public readonly string $stripe_price_id
     ) {}
 
     public static function fromRequest(ProductRequest $request): self
@@ -30,6 +31,7 @@ class ProductDTO
             stock_quantity: $request->stock_quantity,
             featured: $request->featured ?? false, // القيمة الافتراضية false
             popular: $request->popular ?? false,   // القيمة الافتراضية false
+            stripe_price_id:$request->stripe_price_id
         );
     }
 }

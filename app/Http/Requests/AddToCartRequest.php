@@ -3,20 +3,17 @@
 namespace App\Http\Requests;
 
 use App\Exceptions\CustomExceptions;
+use App\Models\Cart;
 use App\Models\Wishlist;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreWishlistRequest extends FormRequest
+class AddToCartRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        if (!$this->user()->can('create', Wishlist::class)) {
-            throw CustomExceptions::authorizationError('You are not authorized to add items to wishlist');
-        }
-
         return true;
     }
 

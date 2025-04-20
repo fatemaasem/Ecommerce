@@ -11,7 +11,7 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'name', 'description', 'price', 'stock_quantity', 'category_id','featured','popular'
+        'user_id', 'name', 'description', 'price', 'stock_quantity', 'category_id','featured','popular','stripe_price_id'
     ];
      /**
      * Append the discounted price to model arrays
@@ -65,6 +65,13 @@ class Product extends Model
     {
         return app('App\Services\OfferService')->calculateDiscountedPrice($this);
     }
+
+    public function carts()
+{
+    return $this->belongsToMany(Cart::class, 'product_carts')
+                ->withPivot('quantity')
+                ->withTimestamps();
+}
     
    
 }

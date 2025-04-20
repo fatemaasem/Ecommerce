@@ -3,10 +3,11 @@
 
 namespace App\Services;
 
+use App\DTOs\CartItemDTO;
 use App\DTOs\WishlistDTO;
 use App\Exceptions\CustomExceptions;
 use App\Http\Requests\UpdateWishlistRequest;
-use App\Interfaces\WishlistRepositoryInterface;
+use App\Interfaces\CartRepositoryInterface;
 use App\Mappers\WishlistMapper;
 use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
@@ -14,10 +15,10 @@ use Illuminate\Support\Facades\Auth;
 class WishlistService
 {
     public function __construct(
-        private WishlistRepositoryInterface $repository
+        private CartRepositoryInterface $repository
     ) {}
 
-    public function addToWishlist( WishlistDTO $wishlistDTO): array
+    public function addToWishlist( CartItemDTO $cartDTO): array
     {
         
         return WishlistMapper::toResponse($this->repository->addToWishlist($wishlistDTO)) ;

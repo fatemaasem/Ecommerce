@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
-            $table->id();
-            $table->enum('name', ['admin', 'client']);
-
-            $table->timestamps();
+        Schema::table('products', function (Blueprint $table) {
+            $table->string('stripe_price_id')
+           
+            ->after('id'); // or specify where you want it positioned
         });
     }
 
@@ -24,6 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::table('products', function (Blueprint $table) {
+            $table->dropColumn('stripe_price_id');
+        });
     }
 };

@@ -29,5 +29,5 @@ require __DIR__.'/api/produtImage.php';
 
 require __DIR__.'/api/offer.php';
 
-require __DIR__.'/api/wishlist.php';
+require __DIR__.'/api/cart.php';
 require __DIR__.'/api/order.php';

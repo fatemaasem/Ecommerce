@@ -29,6 +29,7 @@ class ProductRequest extends FormRequest
             'category_id' => 'required|exists:categories,id',
             'featured' => 'required|boolean', //value is `true` or `false`
             'popular' => 'required|boolean',  // value is `true` or `false
+            'stripe_price_id'=>"required"
         ];
     }
 }

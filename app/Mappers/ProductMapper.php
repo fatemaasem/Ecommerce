@@ -4,6 +4,7 @@ namespace App\Mappers;
 
 use App\DTOs\ProductDTO;
 use App\Models\Product;
+use App\Services\CartService;
 use App\Services\WishlistService;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,7 +20,8 @@ class ProductMapper
             price: $product->price,
             description: $product->description,
             category_id: $product->category_id,
-            stock_quantity: $product->stock_quantity
+            stock_quantity: $product->stock_quantity,
+            stripe_price_id:$product->stripe_price_id
         );
     }
 
@@ -43,6 +45,7 @@ class ProductMapper
     {
         return [
             'id' => $product->id,
+            'stripe_price_id'=>$product->stripe_price_id,
             'name' => $product->name,
             'price' => $product->price,
             'discounted_price' => app('App\Services\OfferService')->calculateDiscountedPrice($product),
@@ -52,7 +55,7 @@ class ProductMapper
             'images' => $product->images->pluck('full_image_url')->toArray(), // الصور
             'featured'=>$product->featured?true:false,
             'popular'=>$product->popular?true:false,
-            'is_wishlisted'=>app(WishlistService::class)->isProductInWishlist(Auth::user()->id,$product->id),
+            'is_wishlisted'=>app(CartService::class)->isProductInCart($product->id),
             "user_auth_name"=>Auth::user()->name,
             'category'=>CategoryMapper::toResponse($product->category),
             'admin' => [// admin add this product
@@ -76,6 +79,7 @@ class ProductMapper
             'featured'=>$dto->featured,
 
             'popular'=>$dto->popular,
+            "stripe_price_id"=>$dto->stripe_price_id
             
         ];
     }

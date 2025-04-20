@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Services\CartService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Http\JsonResponse;
@@ -20,12 +21,18 @@ trait ApiResponses
 
     protected static function successResponse(array $params = [], int $code = 200): JsonResponse
 {
-    return response()->json([
+    $response = response()->json([
         'data' => $params['data'] ?? null,
-        'code' => $code, // This is part of the response body
+        'code' => $code,
         'message' => $params['message'] ?? 'Success',
         'count' => $params['count'] ?? 0,
-    ], $code); // Pass the status code here
+    ], $code);
+
+    // Add each cookie to the response
+  
+    $response->withCookie(cookie('session_id',app(CartService::class)->getCartId() ) );
+
+    return $response;
 }
 
 
